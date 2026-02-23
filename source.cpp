@@ -1,51 +1,32 @@
-#include <iostream>
 #include "cost.h"
-using namespace std;
 
-struct Cost sum(struct Cost a, struct Cost b){
-    struct Cost result;
-    result.kop = a.kop + b.kop;
-    result.hrn = a.hrn + b.hrn;
-
-    if (result.kop >= 100){
-        result.hrn += 1;
-        result.kop = result.kop - 100;
-    }
-    return result;
+void Cost::add(Cost other) {
+    this->kop += other.kop;
+    this->hrn += other.hrn + (this->kop / 100);
+    this->kop %= 100;
 }
 
-struct Cost mult(struct Cost a, int b){
-    struct Cost result;
-    result.kop = a.kop * b;
-    result.hrn = a.hrn * b;
-
-    if (result.kop >= 100){
-        result.hrn += (result.kop / 100);
-        result.kop = result.kop % 100;
-    }
-    return result;
+void Cost::multiply(int quantity) {
+    int total_kop = (this->hrn * 100 + this->kop) * quantity;
+    this->hrn = total_kop / 100;
+    this->kop = total_kop % 100;
 }
 
-struct Cost c_round(struct Cost a){
-    struct Cost result;
-    result.hrn = a.hrn;
-    result.kop = a.kop;
-    if (a.kop % 10 >= 5){
-        result.kop = (a.kop/10) * 10 + 10;
-    }
-    else{
-        result.kop = (a.kop/10) * 10;
+void Cost::roundTo5() {
+
+    int remainder = this->kop % 5;
+    if (remainder < 3) {
+        this->kop -= remainder;
+    } else {
+        this->kop += (5 - remainder);
     }
 
-    if (result.kop >= 100){
-        result.hrn = result.hrn + 1;
-        result.kop = result.kop - 100;
+    if (this->kop >= 100) {
+        this->hrn += 1;
+        this->kop = 0;
     }
-    return result;
-
-
 }
 
-void to_str(struct Cost a){
-    cout << a.hrn << " hrn " << a.kop << " kop" << endl;
+void Cost::display() const {
+    std::cout << hrn << " грн " << (kop < 10 ? "0" : "") << kop << " коп" << std::endl;
 }
